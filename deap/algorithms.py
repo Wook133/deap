@@ -27,7 +27,8 @@ you really want them to do.
 
 import random
 
-import tools
+from . import tools
+import csv
 
 
 def varAnd(population, toolbox, cxpb, mutpb):
@@ -157,7 +158,7 @@ def eaSimple(population, toolbox, cxpb, mutpb, ngen, stats=None,
     record = stats.compile(population) if stats else {}
     logbook.record(gen=0, nevals=len(invalid_ind), **record)
     if verbose:
-        print logbook.stream
+        print(logbook.stream)
 
     # Begin the generational process
     for gen in range(1, ngen + 1):
@@ -184,7 +185,7 @@ def eaSimple(population, toolbox, cxpb, mutpb, ngen, stats=None,
         record = stats.compile(population) if stats else {}
         logbook.record(gen=gen, nevals=len(invalid_ind), **record)
         if verbose:
-            print logbook.stream
+            print(logbook.stream)
 
     return population, logbook
 
@@ -227,10 +228,10 @@ def varOr(population, toolbox, lambda_, cxpb, mutpb):
         "or equal to 1.0.")
 
     offspring = []
-    for _ in xrange(lambda_):
+    for _ in range(lambda_):
         op_choice = random.random()
         if op_choice < cxpb:            # Apply crossover
-            ind1, ind2 = map(toolbox.clone, random.sample(population, 2))
+            ind1, ind2 = list(map(toolbox.clone, random.sample(population, 2)))
             ind1, ind2 = toolbox.mate(ind1, ind2)
             del ind1.fitness.values
             offspring.append(ind1)
@@ -308,7 +309,7 @@ def eaMuPlusLambda(population, toolbox, mu, lambda_, cxpb, mutpb, ngen,
     record = stats.compile(population) if stats is not None else {}
     logbook.record(gen=0, nevals=len(invalid_ind), **record)
     if verbose:
-        print logbook.stream
+        print(logbook.stream)
 
     # Begin the generational process
     for gen in range(1, ngen + 1):
@@ -332,13 +333,13 @@ def eaMuPlusLambda(population, toolbox, mu, lambda_, cxpb, mutpb, ngen,
         record = stats.compile(population) if stats is not None else {}
         logbook.record(gen=gen, nevals=len(invalid_ind), **record)
         if verbose:
-            print logbook.stream
+            print(logbook.stream)
 
     return population, logbook
 
 
 def eaMuCommaLambda(population, toolbox, mu, lambda_, cxpb, mutpb, ngen,
-                    stats=None, halloffame=None, verbose=__debug__):
+                    stats=None, halloffame=None, verbose=__debug__, path=None, addition=None):
     """This is the :math:`(\mu~,~\lambda)` evolutionary algorithm.
 
     :param population: A list of individuals.
@@ -407,9 +408,21 @@ def eaMuCommaLambda(population, toolbox, mu, lambda_, cxpb, mutpb, ngen,
     logbook.header = ['gen', 'nevals'] + (stats.fields if stats else [])
 
     record = stats.compile(population) if stats is not None else {}
+
     logbook.record(gen=0, nevals=len(invalid_ind), **record)
     if verbose:
-        print logbook.stream
+        line = logbook.stream
+        if path is not None:
+            file1 = open(path + "reward.csv", "a")
+            write_line = line.replace("\t", ",")
+            file1.write(write_line)
+            file1.write("\n")
+            file1.close()
+        #print(line)
+            #with open(path, 'a', newline='') as file:
+            #    writer = csv.writer(file)
+            #    writer.writerow(line)
+        print(line)
 
     # Begin the generational process
     for gen in range(1, ngen + 1):
@@ -433,8 +446,19 @@ def eaMuCommaLambda(population, toolbox, mu, lambda_, cxpb, mutpb, ngen,
         record = stats.compile(population) if stats is not None else {}
         logbook.record(gen=gen, nevals=len(invalid_ind), **record)
         if verbose:
-            print logbook.stream
+            line = logbook.stream
+            if path is not None:
+                file1 = open(path+"reward.csv", "a")
+                write_line = line.replace("\t", ",")
+                file1.write(write_line)
+                file1.write("\n")
+                file1.close()
+            print(line)
     return population, logbook
+
+
+
+
 
 
 def eaGenerateUpdate(toolbox, ngen, halloffame=None, stats=None,
@@ -467,10 +491,6 @@ def eaGenerateUpdate(toolbox, ngen, halloffame=None, stats=None,
             evaluate(population)
             toolbox.update(population)
 
-
-    This function expects :meth:`toolbox.generate` and :meth:`toolbox.evaluate` aliases to be
-    registered in the toolbox.
-    
     .. [Colette2010] Collette, Y., N. Hansen, G. Pujol, D. Salazar Aponte and
        R. Le Riche (2010). On Object-Oriented Programming of Optimizers -
        Examples in Scilab. In P. Breitkopf and R. F. Coelho, eds.:
@@ -481,7 +501,7 @@ def eaGenerateUpdate(toolbox, ngen, halloffame=None, stats=None,
     logbook = tools.Logbook()
     logbook.header = ['gen', 'nevals'] + (stats.fields if stats else [])
 
-    for gen in xrange(ngen):
+    for gen in range(ngen):
         # Generate a new population
         population = toolbox.generate()
         # Evaluate the individuals
@@ -498,6 +518,6 @@ def eaGenerateUpdate(toolbox, ngen, halloffame=None, stats=None,
         record = stats.compile(population) if stats is not None else {}
         logbook.record(gen=gen, nevals=len(population), **record)
         if verbose:
-            print logbook.stream
+            print(logbook.stream)
 
     return population, logbook
