@@ -339,7 +339,7 @@ def eaMuPlusLambda(population, toolbox, mu, lambda_, cxpb, mutpb, ngen,
 
 
 def eaMuCommaLambda(population, toolbox, mu, lambda_, cxpb, mutpb, ngen,
-                    stats=None, halloffame=None, verbose=__debug__, path=None, addition=None):
+                    stats=None, halloffame=None, verbose=__debug__, path=None, dual=None):
     """This is the :math:`(\mu~,~\lambda)` evolutionary algorithm.
 
     :param population: A list of individuals.
@@ -412,12 +412,42 @@ def eaMuCommaLambda(population, toolbox, mu, lambda_, cxpb, mutpb, ngen,
     logbook.record(gen=0, nevals=len(invalid_ind), **record)
     if verbose:
         line = logbook.stream
-        if path is not None:
-            file1 = open(path + "reward.csv", "a")
-            write_line = line.replace("\t", ",")
-            file1.write(write_line)
-            file1.write("\n")
-            file1.close()
+        if ";" not in line:
+            if path is not None:
+                file1 = open(path + "reward.csv", "a")
+                write_line = line.replace("\t", ",")
+                file1.write(write_line)
+                file1.write("\n")
+                file1.close()
+        else:
+            if path is not None:
+                stat_data = line.split(";")
+                file_rw = open(path + "rw_reward.csv", "a")
+                write_line = stat_data[0].replace("\t", ",")
+                file_rw.write(write_line)
+                file_rw.write("\n")
+                file_rw.close()
+
+                file_sim = open(path + "sim_reward.csv", "a")
+                write_line = stat_data[1].replace("\t", ",")
+                file_sim.write(write_line)
+                file_sim.write("\n")
+                file_sim.close()
+
+                file_rw_mean = open(path + "rw_mean_reward.csv", "a")
+                write_line = stat_data[2].replace("\t", ",")
+                file_rw_mean.write(write_line)
+                file_rw_mean.write("\n")
+                file_rw_mean.close()
+
+                file_sim_mean = open(path + "sim_mean_reward.csv", "a")
+                write_line = stat_data[3].replace("\t", ",")
+                file_sim_mean.write(write_line)
+                file_sim_mean.write("\n")
+                file_sim_mean.close()
+
+
+
         #print(line)
             #with open(path, 'a', newline='') as file:
             #    writer = csv.writer(file)
@@ -447,12 +477,39 @@ def eaMuCommaLambda(population, toolbox, mu, lambda_, cxpb, mutpb, ngen,
         logbook.record(gen=gen, nevals=len(invalid_ind), **record)
         if verbose:
             line = logbook.stream
-            if path is not None:
-                file1 = open(path+"reward.csv", "a")
-                write_line = line.replace("\t", ",")
-                file1.write(write_line)
-                file1.write("\n")
-                file1.close()
+            if ";" not in line:
+                if path is not None:
+                    file1 = open(path + "reward.csv", "a")
+                    write_line = line.replace("\t", ",")
+                    file1.write(write_line)
+                    file1.write("\n")
+                    file1.close()
+            else:
+                if path is not None:
+                    stat_data = line.split(";")
+                    file_rw = open(path + "rw_reward.csv", "a")
+                    write_line = stat_data[0].replace("\t", ",")
+                    file_rw.write(write_line)
+                    file_rw.write("\n")
+                    file_rw.close()
+
+                    file_sim = open(path + "sim_reward.csv", "a")
+                    write_line = stat_data[1].replace("\t", ",")
+                    file_sim.write(write_line)
+                    file_sim.write("\n")
+                    file_sim.close()
+
+                    file_rw_mean = open(path + "rw_mean_reward.csv", "a")
+                    write_line = stat_data[2].replace("\t", ",")
+                    file_rw_mean.write(write_line)
+                    file_rw_mean.write("\n")
+                    file_rw_mean.close()
+
+                    file_sim_mean = open(path + "sim_mean_reward.csv", "a")
+                    write_line = stat_data[3].replace("\t", ",")
+                    file_sim_mean.write(write_line)
+                    file_sim_mean.write("\n")
+                    file_sim_mean.close()
             print(line)
     return population, logbook
 
