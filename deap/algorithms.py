@@ -29,7 +29,7 @@ import random
 
 from . import tools
 import csv
-
+from pympler import muppy, summary
 
 def varAnd(population, toolbox, cxpb, mutpb):
     """Part of an evolutionary algorithm applying only the variation part
@@ -294,6 +294,7 @@ def eaMuPlusLambda(population, toolbox, mu, lambda_, cxpb, mutpb, ngen,
     registered in the toolbox. This algorithm uses the :func:`varOr`
     variation.
     """
+    print("eaMuPlusLambda")
     logbook = tools.Logbook()
     logbook.header = ['gen', 'nevals'] + (stats.fields if stats else [])
 
@@ -339,7 +340,7 @@ def eaMuPlusLambda(population, toolbox, mu, lambda_, cxpb, mutpb, ngen,
 
 
 def eaMuCommaLambda(population, toolbox, mu, lambda_, cxpb, mutpb, ngen,
-                    stats=None, halloffame=None, verbose=__debug__, path=None, dual=None):
+                    stats=None, halloffame=None, verbose=__debug__, path=None, delete_fitness=False):
     """This is the :math:`(\mu~,~\lambda)` evolutionary algorithm.
 
     :param population: A list of individuals.
@@ -394,7 +395,7 @@ def eaMuCommaLambda(population, toolbox, mu, lambda_, cxpb, mutpb, ngen,
     variation.
     """
     assert lambda_ >= mu, "lambda must be greater or equal to mu."
-
+    print("eaMuCommaLambda")
     # Evaluate the individuals with an invalid fitness
     invalid_ind = [ind for ind in population if not ind.fitness.valid]
     fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
@@ -459,6 +460,12 @@ def eaMuCommaLambda(population, toolbox, mu, lambda_, cxpb, mutpb, ngen,
         # Vary the population
         offspring = varOr(population, toolbox, lambda_, cxpb, mutpb)
 
+        #Evaluate the Fitness of All Offspring
+        if delete_fitness:
+            for ind in offspring:
+                del ind.fitness.values
+
+
         # Evaluate the individuals with an invalid fitness
         invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
         fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
@@ -510,6 +517,9 @@ def eaMuCommaLambda(population, toolbox, mu, lambda_, cxpb, mutpb, ngen,
                     file_sim_mean.write(write_line)
                     file_sim_mean.write("\n")
                     file_sim_mean.close()
+            #all_objects = muppy.get_objects()
+            #sum1 = summary.summarize(all_objects)  # Prints out a summary of the large objects
+            #summary.print_(sum1)
             print(line)
     return population, logbook
 
