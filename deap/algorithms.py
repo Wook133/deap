@@ -29,7 +29,7 @@ import random
 
 from . import tools
 import csv
-from pympler import muppy, summary
+#from pympler import muppy, summary
 
 def varAnd(population, toolbox, cxpb, mutpb):
     """Part of an evolutionary algorithm applying only the variation part
